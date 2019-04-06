@@ -14,5 +14,13 @@ public class SymbolList {
 	public Token get(String name) {
 		return trie.search(name);
 	}
+	public int size() {
+		// TODO Auto-generated method stub
+		return trie.size();
+	}
+	public String[][] toTable() {
+		// TODO Auto-generated method stub
+		return trie.toTable();
+	}
 	
 }

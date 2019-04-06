@@ -62,7 +62,7 @@ public class UserInterface extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				TokenListDialog tokenListDialog=new TokenListDialog();
+				TokenListDialog tokenListDialog=new TokenListDialog(self);
 			}
 			
 		});

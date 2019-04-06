@@ -17,6 +17,5 @@ public class NumToken extends Token {
 	}
 	public String valueToString() {
 		return Integer.toString(value);
-	}
-	
+	}	
 }

@@ -9,14 +9,14 @@ import javax.swing.JTable;
 
 import lexicalanalyze.LexicalAnalyze;
 
-public class SymbolListDialog extends JDialog {
-	public SymbolListDialog(UserInterface ui) {
-		super(ui,"符号表",false);
+public class TokenListDialog extends JDialog {
+	public TokenListDialog(UserInterface ui) {
+		super(ui,"Token串表",false);
 		setSize(500,500);
 		
 		JPanel panel=new JPanel(new BorderLayout());
-		String[] head= {"符号名","符号类型","符号值"};
-		String[][] data=LexicalAnalyze.symbolListToTable();
+		String[] head= {"token名","token类型","token值"};
+		String[][] data=LexicalAnalyze.tokenListToTable();
 		JTable table=new JTable(data,head);
 		panel.add(BorderLayout.CENTER,new JScrollPane(table));
 		

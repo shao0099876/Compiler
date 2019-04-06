@@ -32,7 +32,7 @@ public class LexicalAnalyze {
 		forward=0;
 		match_start();//开始分析
 		if(DEBUG) {//输出调试信息
-			System.out.print(symbolList.toString());
+			
 		}
 	}
 	private static void match_start() {//分析自动机初始状态
@@ -168,5 +168,17 @@ public class LexicalAnalyze {
 		}
 		lexemeBegin=forward;
 		return;
+	}
+	public static String[][] symbolListToTable() {
+		// TODO Auto-generated method stub
+		return symbolList.toTable();
+	}
+	public static String[][] tokenListToTable() {
+		// TODO Auto-generated method stub
+		String[][] res=new String[tokenList.size()][3];
+		for(int i=0;i<tokenList.size();i++) {
+			res[i]=tokenList.get(i).toTable();
+		}
+		return res;
 	}
 }

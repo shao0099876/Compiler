@@ -15,13 +15,20 @@ public abstract class Token {
 		sb.append(name);
 		sb.append(" ");
 		sb.append("value:");
-		sb.append(this.valueToString());
+		sb.append(valueToString());
 		sb.append(" ");
 		sb.append("type:");
-		sb.append(this.getType());
+		sb.append(getType());
 		sb.append("\n");
 		return sb.toString();
 	}
 	public abstract String valueToString();
 	public abstract String getType();
+	public String[] toTable() {
+		String[] res=new String[3];
+		res[0]=name;
+		res[1]=getType();
+		res[2]=valueToString();
+		return res;
+	}
 }

@@ -1,7 +1,9 @@
 package lexicalanalyze;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import lexicalanalyze.token.Token;
 
@@ -33,9 +35,13 @@ class TrieNode{
 	public Token getToken() {
 		return token;
 	}
+	public Set<Character> getNextSet() {
+		return next.keySet();
+	}
 }
 public class Trie{
 	private TrieNode root;
+	private int size=0;
 	public Trie() {
 		root=new TrieNode();
 	}
@@ -45,6 +51,7 @@ public class Trie{
 			now=now.setNext(name.charAt(i));
 		}
 		now.setToken(token);
+		size+=1;
 		return;
 	}
 	public Token search(String name) {
@@ -56,5 +63,31 @@ public class Trie{
 			}
 		}
 		return now.getToken();
+	}
+	public int size() {
+		// TODO Auto-generated method stub
+		return size;
+	}
+	private ArrayList<String[]> ergodic(TrieNode now,int cnt) {
+		Set<Character> next=now.getNextSet();
+		Object[] nextArray=next.toArray();
+		ArrayList<String[]> res=new ArrayList<String[]>();
+		if(now.getToken()!=null) {
+			res.add(now.getToken().toTable());
+		}
+		for(int i=0;i<nextArray.length;i++) {
+			char c=((Character)nextArray[i]).charValue();
+			res.addAll(ergodic(now.getNext(c),cnt));
+		}
+		return res;
+	}
+	public String[][] toTable() {
+		// TODO Auto-generated method stub
+		ArrayList<String[]> tmp=ergodic(root,0);
+		String[][] res=new String[tmp.size()][3];
+		for(int i=0;i<tmp.size();i++) {
+			res[i]=tmp.get(i);
+		}
+		return res;
 	}
 }
