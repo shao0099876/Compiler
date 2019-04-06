@@ -162,6 +162,7 @@ public class LexicalAnalyze {
 			}
 		}
 		System.out.println("Lexical analyze EXCEPTION occured AT Line:"+(Integer.toString(line)+1)+",Column:"+Integer.toString(column));
+		//Ìí¼Ó´íÎó±í
 		while(forward<code.length()&&!isBlank(code.charAt(forward))&&!isOp(code.charAt(forward))){
 			forward+=1;
 		}
