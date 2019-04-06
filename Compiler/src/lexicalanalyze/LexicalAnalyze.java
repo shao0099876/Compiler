@@ -21,19 +21,32 @@ public class LexicalAnalyze {
 	private static String keywordList[]= {"if","then","else","while","do"};//关键字表
 	private static SymbolList symbolList;//符号表
 	private static ArrayList<Token> tokenList;//token串表
+	private static ArrayList<LexicalError> errorList;
 	public static void run() {//词法分析主程序
 		code=UserInterface.getTextArea().getText();//获取待分析字符串
 		symbolList=new SymbolList();//符号表初始化
 		tokenList=new ArrayList<Token>();//串表初始化
+		errorList=new ArrayList<LexicalError>();
 		for(int i=0;i<keywordList.length;i++) {//symbolList加入关键词符号
 			symbolList.add(new KeywordToken(keywordList[i]));
 		}
 		lexemeBegin=0;//初始化指针
 		forward=0;
+		long time1=System.currentTimeMillis();
 		match_start();//开始分析
-		if(DEBUG) {//输出调试信息
-			
+		long time2=System.currentTimeMillis();
+		long diff=time2-time1;
+		StringBuffer sb=new StringBuffer();
+		sb.append("Lexical analyze completed in ");
+		sb.append(diff);
+		sb.append(" ms\n");
+		sb.append("Catched ");
+		sb.append(errorList.size());
+		sb.append(" Lexical analyze EXCEPTIONs totally.\n");
+		for(int i=0;i<errorList.size();i++) {
+			sb.append(errorList.get(i).toString()+"\n");
 		}
+		System.out.println(sb.toString());
 	}
 	private static void match_start() {//分析自动机初始状态
 		while(forward<code.length()) {//防止越界
@@ -49,8 +62,11 @@ public class LexicalAnalyze {
 				lexemeBegin=forward;
 				match_opToken();
 			}
-			else {//跳过空白符
+			else if(isBlank(code.charAt(forward))){
 				forward+=1;
+			}
+			else {
+				recovery(0);
 			}
 		};
 	}
@@ -82,7 +98,7 @@ public class LexicalAnalyze {
 				return;
 			}
 			else {
-				recovery();//恐慌模式恢复
+				recovery(0);//恐慌模式恢复
 				return;
 			}
 		}
@@ -102,7 +118,7 @@ public class LexicalAnalyze {
 				return;
 			}
 			else {
-				recovery();
+				recovery(1);
 				return;
 			}
 		}
@@ -149,7 +165,7 @@ public class LexicalAnalyze {
 		}
 		tokenList.add(res);
 	}
-	private static void recovery() {
+	private static void recovery(int errorCode) {
 		int line=0;
 		int column=0;
 		for(int i=0;i<=forward;i++) {
@@ -161,8 +177,7 @@ public class LexicalAnalyze {
 				column+=1;
 			}
 		}
-		System.out.println("Lexical analyze EXCEPTION occured AT Line:"+(Integer.toString(line)+1)+",Column:"+Integer.toString(column));
-		//添加错误表
+		errorList.add(new LexicalError(line+1,column,errorCode));
 		while(forward<code.length()&&!isBlank(code.charAt(forward))&&!isOp(code.charAt(forward))){
 			forward+=1;
 		}
