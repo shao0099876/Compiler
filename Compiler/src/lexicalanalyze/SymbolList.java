@@ -3,7 +3,7 @@ package lexicalanalyze;
 import lexicalanalyze.token.Token;
 
 public class SymbolList {
-	private static Trie trie;//内置Trie树，用于快速查找
+	private static Trie trie;
 	public SymbolList() {
 		trie=new Trie();
 	}
@@ -15,11 +15,9 @@ public class SymbolList {
 		return trie.search(name);
 	}
 	public int size() {
-		// TODO Auto-generated method stub
 		return trie.size();
 	}
 	public String[][] toTable() {
-		// TODO Auto-generated method stub
 		return trie.toTable();
 	}
 	

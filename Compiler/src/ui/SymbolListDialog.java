@@ -13,15 +13,12 @@ public class SymbolListDialog extends JDialog {
 	public SymbolListDialog(UserInterface ui) {
 		super(ui,"符号表",false);
 		setSize(500,500);
-		
-		JPanel panel=new JPanel(new BorderLayout());
 		String[] head= {"符号名","符号类型","符号值"};
 		String[][] data=LexicalAnalyze.symbolListToTable();
 		JTable table=new JTable(data,head);
+		JPanel panel=new JPanel(new BorderLayout());
 		panel.add(BorderLayout.CENTER,new JScrollPane(table));
-		
 		setContentPane(panel);
-		
 		setVisible(true);
 	}
 }

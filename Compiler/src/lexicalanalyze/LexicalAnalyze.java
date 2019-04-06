@@ -10,7 +10,7 @@ import lexicalanalyze.token.Token;
 import ui.UserInterface;
 
 public class LexicalAnalyze {
-	private static boolean DEBUG=true;//DEBUG输出标志
+	//private static boolean DEBUG=true;//DEBUG输出标志
 	private static int lexemeBegin;//开始标记
 	private static int forward;//前推标记
 	private static String code;//待分析字符串
@@ -22,8 +22,8 @@ public class LexicalAnalyze {
 	private static SymbolList symbolList;//符号表
 	private static ArrayList<Token> tokenList;//token串表
 	private static ArrayList<LexicalError> errorList;
-	public static void run() {//词法分析主程序
-		code=UserInterface.getTextArea().getText();//获取待分析字符串
+	private static void initance() {
+		code=UserInterface.getCode();//获取待分析字符串
 		symbolList=new SymbolList();//符号表初始化
 		tokenList=new ArrayList<Token>();//串表初始化
 		errorList=new ArrayList<LexicalError>();
@@ -32,10 +32,8 @@ public class LexicalAnalyze {
 		}
 		lexemeBegin=0;//初始化指针
 		forward=0;
-		long time1=System.currentTimeMillis();
-		match_start();//开始分析
-		long time2=System.currentTimeMillis();
-		long diff=time2-time1;
+	}
+	private static void output(long diff) {
 		StringBuffer sb=new StringBuffer();
 		sb.append("Lexical analyze completed in ");
 		sb.append(diff);
@@ -47,6 +45,14 @@ public class LexicalAnalyze {
 			sb.append(errorList.get(i).toString()+"\n");
 		}
 		System.out.println(sb.toString());
+	}
+	public static void run() {//词法分析主程序
+		initance();
+		long time1=System.currentTimeMillis();
+		match_start();//开始分析
+		long time2=System.currentTimeMillis();
+		long diff=time2-time1;
+		output(diff);
 	}
 	private static void match_start() {//分析自动机初始状态
 		while(forward<code.length()) {//防止越界
@@ -185,11 +191,9 @@ public class LexicalAnalyze {
 		return;
 	}
 	public static String[][] symbolListToTable() {
-		// TODO Auto-generated method stub
 		return symbolList.toTable();
 	}
 	public static String[][] tokenListToTable() {
-		// TODO Auto-generated method stub
 		String[][] res=new String[tokenList.size()][3];
 		for(int i=0;i<tokenList.size();i++) {
 			res[i]=tokenList.get(i).toTable();

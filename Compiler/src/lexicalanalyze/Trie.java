@@ -65,7 +65,6 @@ public class Trie{
 		return now.getToken();
 	}
 	public int size() {
-		// TODO Auto-generated method stub
 		return size;
 	}
 	private ArrayList<String[]> ergodic(TrieNode now,int cnt) {
@@ -82,7 +81,6 @@ public class Trie{
 		return res;
 	}
 	public String[][] toTable() {
-		// TODO Auto-generated method stub
 		ArrayList<String[]> tmp=ergodic(root,0);
 		String[][] res=new String[tmp.size()][3];
 		for(int i=0;i<tmp.size();i++) {

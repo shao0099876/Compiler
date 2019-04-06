@@ -13,15 +13,12 @@ public class TokenListDialog extends JDialog {
 	public TokenListDialog(UserInterface ui) {
 		super(ui,"Token串表",false);
 		setSize(500,500);
-		
-		JPanel panel=new JPanel(new BorderLayout());
 		String[] head= {"token名","token类型","token值"};
 		String[][] data=LexicalAnalyze.tokenListToTable();
 		JTable table=new JTable(data,head);
+		JPanel panel=new JPanel(new BorderLayout());
 		panel.add(BorderLayout.CENTER,new JScrollPane(table));
-		
 		setContentPane(panel);
-		
 		setVisible(true);
 	}
 }
