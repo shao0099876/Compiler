@@ -1,11 +1,11 @@
-package lexicalanalyze;
+package lexer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import lexicalanalyze.token.Token;
+import lexer.token.Token;
 
 class TrieNode{
 	private Token token;

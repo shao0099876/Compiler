@@ -2,6 +2,7 @@ package ui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -11,7 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import lexicalanalyze.LexicalAnalyze;
+import lexer.LexicalAnalyze;
+import parser.Parser;
 import tools.PublicConst;
 public class UserInterface extends JFrame{
 	private static JTextArea codeText=new JTextArea() {{
@@ -62,16 +64,39 @@ public class UserInterface extends JFrame{
 			lexicalAnalyzeMenuSaveToFileItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					
+					try {
+						LexicalAnalyze.outputToFile();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+				
+			});
+			lexicalAnalyzeMenu.add(lexicalAnalyzeMenuSaveToFileItem);
+			
+		menuBar.add(lexicalAnalyzeMenu);
+		
+		//语法分析菜单创建
+		JMenu ParserMenu=new JMenu("语法分析");
+			
+			//编译LR(0)文法
+			JMenuItem compileLR=new JMenuItem("编译LR(0)文法");
+			compileLR.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					Parser.compileLR();
 				}
 				
 			});
 			
-		menuBar.add(lexicalAnalyzeMenu);
+		
+		
 		return menuBar;
 	}
 	public UserInterface() {
 		super("Compiler Powered by Balmy");
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		self=this;
 		setSize(1000,1000);
 		JPanel mainFrame=new JPanel(new BorderLayout());

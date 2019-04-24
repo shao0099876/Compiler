@@ -1,4 +1,4 @@
-package lexicalanalyze;
+package lexer;
 
 public class LexicalError {
 	private int x;

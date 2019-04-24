@@ -1,12 +1,15 @@
-package lexicalanalyze;
+package lexer;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
-import lexicalanalyze.token.IdToken;
-import lexicalanalyze.token.KeywordToken;
-import lexicalanalyze.token.NumToken;
-import lexicalanalyze.token.OpToken;
-import lexicalanalyze.token.Token;
+import lexer.token.IdToken;
+import lexer.token.KeywordToken;
+import lexer.token.NumToken;
+import lexer.token.OpToken;
+import lexer.token.Token;
 import ui.UserInterface;
 
 public class LexicalAnalyze {
@@ -82,8 +85,6 @@ public class LexicalAnalyze {
 		if(c=='='||c=='>'|c=='<'|c=='!') {//判断是否是特殊的两位符号
 			if(forward<code.length()&&code.charAt(forward)=='=') {
 				forward+=1;
-				matched(OP);
-				return;
 			}
 		}
 		matched(OP);
@@ -199,5 +200,26 @@ public class LexicalAnalyze {
 			res[i]=tokenList.get(i).toTable();
 		}
 		return res;
+	}
+	public static void outputToFile() throws IOException {
+		BufferedWriter writer=new BufferedWriter(new FileWriter("symbolList.txt"));
+		String[][] tmp=symbolListToTable();
+		for(int i=0;i<tmp.length;i++) {
+			for(int j=0;j<3;j++) {
+				writer.write(tmp[i][j]+" ");
+			}
+			writer.write("\r\n");
+		}
+		writer.close();
+		
+		writer=new BufferedWriter(new FileWriter("tokenList.txt"));
+		String[][] tmp1=tokenListToTable();
+		for(int i=0;i<tmp.length;i++) {
+			for(int j=0;j<3;j++) {
+				writer.write(tmp1[i][j]+" ");
+			}
+			writer.write("\r\n");
+		}
+		writer.close();
 	}
 }

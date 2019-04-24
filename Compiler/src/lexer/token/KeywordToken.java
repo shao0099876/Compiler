@@ -1,4 +1,4 @@
-package lexicalanalyze.token;
+package lexer.token;
 
 public class KeywordToken extends Token{
 	public KeywordToken(String p_name) {

@@ -1,6 +1,6 @@
-package lexicalanalyze;
+package lexer;
 
-import lexicalanalyze.token.Token;
+import lexer.token.Token;
 
 public class SymbolList {
 	private static Trie trie;

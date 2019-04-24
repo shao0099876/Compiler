@@ -1,4 +1,4 @@
-package lexicalanalyze.token;
+package lexer.token;
 
 public class OpToken extends Token {
 

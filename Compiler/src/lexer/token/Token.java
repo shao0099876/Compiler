@@ -1,4 +1,4 @@
-package lexicalanalyze.token;
+package lexer.token;
 
 public abstract class Token {
 	

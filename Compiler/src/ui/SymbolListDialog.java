@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import lexicalanalyze.LexicalAnalyze;
+import lexer.LexicalAnalyze;
 
 public class SymbolListDialog extends JDialog {
 	public SymbolListDialog(UserInterface ui) {
