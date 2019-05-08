@@ -214,27 +214,35 @@ public class Parser {
 	}
 	private static Set<Items> CLOSURE(Set<Items> I) {
 		Set<Items> J=new HashSet<Items>();
+		Set<Items> res=new HashSet<Items>();
 		J.addAll(I);
 		boolean flag=true;
 		while(flag){
 			flag=false;
 			for(Items item:J) {
+				J.remove(item);
+				res.add(item);
 				String s=item.getSign();
 				if (isNonterminal(s)) {
 					for(Production production:G) {
-						if(!production.get(0).equals(s)) {
+						
+						if(!production.left.equals(s)) {
 							continue;
 						}
 						Items tmp=new Items(production);
 						if(!J.contains(tmp)) {
 							J.add(tmp);
 							flag=true;
+							break;
 						}
 					}
 				}
+				if(flag) {
+					break;
+				}
 			}
 		}
-		return J;
+		return res;
 	}
 	private static Set<Items> GOTO(Set<Items> I,String X){
 		Set<Items> res=new HashSet<Items>();
@@ -275,9 +283,10 @@ public class Parser {
 				}
 			}
 		}
+		int a=1+1;
 	}
 	public static void compileLR() {
-		init();
-		items();
+		init();//初始化值
+		items();//求规范LR(0)项集族
 	}
 }
