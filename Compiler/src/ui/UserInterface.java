@@ -85,7 +85,12 @@ public class UserInterface extends JFrame{
 				
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					Parser.compileLR();
+					try {
+						Parser.compileLR();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				
 			});

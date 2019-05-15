@@ -49,4 +49,7 @@ public class Production {
         }
         return true;
 	}
+	public boolean isLeft(String b) {
+		return left.equals(b);
+	}
 }

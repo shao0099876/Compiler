@@ -7,16 +7,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 public class Parser {
-	public static ArrayList<Production> G;
+	private static GrammerSet G;
 	
-	public static ArrayList<String> nonterminalSet;
+	private static ArrayList<String> nonterminalSet;
 	private static ArrayList<String> terminalSet;
 	private static ArrayList<String> symbolSet;
+	
 	private static Map<String,Set<String> > FIRST;
 	private static Map<String,Set<String> > FOLLOW;
 	
@@ -27,8 +27,11 @@ public class Parser {
 	public static boolean isNonterminal(String s) {
 		return nonterminalSet.contains(s);
 	}
-	private static boolean isTerminal(String s) {
+	public static boolean isTerminal(String s) {
 		return terminalSet.contains(s);
+	}
+	public static Production getProduction(int x) {
+		return G.get(x);
 	}
 	private static void init() throws IOException {
 		BufferedReader reader=new BufferedReader(new FileReader("LR.txt"));
@@ -45,7 +48,7 @@ public class Parser {
 		symbolSet.addAll(nonterminalSet);
 		symbolSet.addAll(terminalSet);
 		//初始化产生式
-		G=new ArrayList<Production>();
+		G=new GrammerSet();
 		for(int i=1;i<=22;i++) {
 			s=reader.readLine();
 			tmp=s.split(" ");
@@ -95,47 +98,34 @@ public class Parser {
 		for(Item i:I) {
 			String next=i.getSign();
 			if(X.equals(next)) {
-				Item t=new Item();
-				t.point=i.point+1;
-				t.production=i.production;
+				Item t=new Item(i.production,i.point+1);
 				tmp.add(t);
 			}
-		}
-		if(tmp.size()==0) {
-			return null;
 		}
 		return CLOSURE(tmp);
 	}
 	public static Itemset CLOSURE(Itemset Y) {
 		Itemset X=new Itemset();
 		for(Item i:Y) {
-			Item tmp=new Item();
-			tmp.point=i.point;
-			tmp.production=i.production;
+			Item tmp=new Item(i.production,i.point);
 			X.add(tmp);
 		}
-		
-		boolean flag=false;
-		do {
-			flag=false;
-			for(Item i:X) {
-				String B=i.getSign();
-				if(Parser.isNonterminal(B)) {
-					for(Production j:Parser.G) {
-						if(j.left.equals(B)) {
-							Item tmp=new Item(Parser.G.indexOf(j));
-							if(!X.contains(tmp)) {
-								X.add(tmp);
-								flag=true;
-							}
+		int tip=0;
+		while(tip<X.size()) {
+			Item i=X.get(tip);
+			String B=i.getSign();
+			if(isNonterminal(B)) {
+				for(Production j:G) {
+					if(j.isLeft(B)) {
+						Item tmp=new Item(G.indexOf(j));
+						if(!X.contains(tmp)) {
+							X.add(tmp);
 						}
 					}
 				}
-				if(flag) {
-					break;
-				}
 			}
-		}while(flag);
+			tip+=1;
+		}
 		return X;
 	}
 	
@@ -143,15 +133,18 @@ public class Parser {
 		Itemset I0=new Itemset();
 		I0.add(new Item(0));
 		C.add(CLOSURE(I0));
-		for(int i=0;i<C.size();i++) {
+		int i=0;
+		while(i<C.size()) {
 			Itemset I=C.get(i);
 			for(String X:symbolSet) {
 				Itemset tmp=GOTO(I,X);
-				if(tmp!=null&&!C.contains(tmp)) {
+				if(!tmp.isEmpty()&&!C.contains(tmp)) {
 					C.add(tmp);
 				}
 			}
+			i+=1;
 		}
+		return;
 	}
 	
 	private static void makeGOTO() {
@@ -164,8 +157,8 @@ public class Parser {
 					status.ACTION.put("$", new OPMode(0));
 					continue;
 				}
-				String A=G.get(j.production).left;
-				String a=G.get(j.production).get(j.point);
+				String A=G.getLeft(j.production);
+				String a=j.getSign();
 				if(a!=null&&isTerminal(a)) {
 					Itemset tmp=GOTO(I,a);
 					if(C.contains(tmp)) {
@@ -180,7 +173,7 @@ public class Parser {
 			}
 			
 			for(String T:nonterminalSet) {
-				if(GOTO(I,T)!=null) {
+				if(!GOTO(I,T).isEmpty()) {
 					status.GOTO.put(T, C.indexOf(GOTO(I,T)));
 				}
 			}
@@ -188,14 +181,12 @@ public class Parser {
 		}
 	}
 	
-	public static void compileLR() {
-		try {
-			init();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}//初始化值
+	public static void compileLR() throws IOException {
+		//初始化值
+		init();
+		//求规范LR0集族
 		getLR0();
+		//生成SLR分析表
 		makeGOTO();
 	}
 	public static void LR(String[] w) {

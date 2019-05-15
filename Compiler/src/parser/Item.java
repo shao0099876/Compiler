@@ -8,13 +8,15 @@ public class Item {
 		point=0;
 	}
 	public Item() {
-		// TODO Auto-generated constructor stub
 		production=-1;
 		point=0;
 	}
+	public Item(int production2, int point2) {
+		production=production2;
+		point=point2;
+	}
 	public String getSign() {
-		// TODO Auto-generated method stub
-		return Parser.G.get(production).get(point);
+		return Parser.getProduction(production).get(point);
 	}
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Item))
@@ -26,7 +28,7 @@ public class Item {
     }
 	public String toString() {
 		StringBuilder sb=new StringBuilder();
-		Production X=Parser.G.get(production);
+		Production X=Parser.getProduction(production);
 		sb.append(X.left);
 		sb.append("¡ú");
 		for(int i=0;i<X.length();i++) {

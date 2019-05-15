@@ -8,7 +8,6 @@ public class OPMode {
 		data=y;
 	}
 	public OPMode(int i) {
-		// TODO Auto-generated constructor stub
 		op=i;
 		data=-1;
 	}
