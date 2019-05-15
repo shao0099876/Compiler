@@ -15,6 +15,8 @@ public class Compiler {
 		}
 		else {
 			Parser.compileLR();
+			String[] tmp= {"int","a","=","1",";"};
+			Parser.LR(tmp);
 		}
 	}
 }

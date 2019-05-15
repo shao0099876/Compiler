@@ -1,5 +1,8 @@
 package parser;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,12 +14,11 @@ import java.util.Set;
 public class Parser {
 	public static ArrayList<Production> G;
 	
-	private static String[] nonterminalList= {"P1","P","D","L","S","E","C","T","F"};
-	private static String[] terminalList= {"id",";","int","float",
-											"=","if","(",")","while",">","<","==","+","-","*","/","int10"};
 	public static ArrayList<String> nonterminalSet;
 	private static ArrayList<String> terminalSet;
 	private static ArrayList<String> symbolSet;
+	private static Map<String,Set<String> > FIRST;
+	private static Map<String,Set<String> > FOLLOW;
 	
 	private static ArrayList<Itemset> C;
 	
@@ -28,187 +30,65 @@ public class Parser {
 	private static boolean isTerminal(String s) {
 		return terminalSet.contains(s);
 	}
-	private static void init() {
-		//初始化产生式
-		G=new ArrayList<Production>();
-		setArray();
-		//初始化符号集
-		nonterminalSet=new ArrayList<String>(Arrays.asList(nonterminalList));
-		terminalSet=new ArrayList<String>(Arrays.asList(terminalList));
+	private static void init() throws IOException {
+		BufferedReader reader=new BufferedReader(new FileReader("LR.txt"));
+		//初始化非终结符号集
+		String s=reader.readLine();
+		String[] tmp=s.split(" ");
+		nonterminalSet=new ArrayList<String>(Arrays.asList(tmp));
+		//初始化终结符号集
+		s=reader.readLine();
+		tmp=s.split(" ");
+		terminalSet=new ArrayList<String>(Arrays.asList(tmp));
+		//初始化文法符号集
 		symbolSet=new ArrayList<String>();
 		symbolSet.addAll(nonterminalSet);
 		symbolSet.addAll(terminalSet);
+		//初始化产生式
+		G=new ArrayList<Production>();
+		for(int i=1;i<=22;i++) {
+			s=reader.readLine();
+			tmp=s.split(" ");
+			Production p=new Production();
+			p.left=tmp[0];
+			for(int j=1;j<tmp.length;j++) {
+				if(tmp[j]=="ε") {
+					continue;
+				}
+				p.right.add(tmp[j]);
+			}
+			G.add(p);
+		}
+		//初始化FIRST集
+		FIRST=new HashMap<String,Set<String> >();
+		for(int i=1;i<=9;i++) {
+			s=reader.readLine();
+			tmp=s.split(" ");
+			String left=tmp[0];
+			Set<String>right=new HashSet<String>();
+			for(int j=1;j<tmp.length;j++) {
+				right.add(tmp[j]);
+			}
+			FIRST.put(left, right);
+		}
+		//初始化FOLLOW集
+		FOLLOW=new HashMap<String,Set<String> >();
+		for(int i=1;i<=9;i++) {
+			s=reader.readLine();
+			tmp=s.split(" ");
+			String left=tmp[0];
+			Set<String>right=new HashSet<String>();
+			for(int j=1;j<tmp.length;j++) {
+				right.add(tmp[j]);
+			}
+			FOLLOW.put(left,right);
+		}
+		reader.close();
 		//初始化GOTO自动机项集
 		C=new ArrayList<Itemset>();
 		analyselist=new ArrayList<Status>();
 	}
-	private static void setArray() {
-		Production tmp;
-		
-		//P1->P
-		tmp=new Production();
-		tmp.left="P1";
-		tmp.add("P");
-		G.add(tmp);
-		
-		//P → D S
-		tmp=new Production();
-		tmp.left="P";
-		tmp.add("D");
-		tmp.add("S");
-		G.add(tmp);
-		
-		//D → L id ; D | ε
-		tmp=new Production();
-		tmp.left="D";
-		tmp.add("L");
-		tmp.add("id");
-		tmp.add(";");
-		tmp.add("D");
-		G.add(tmp);
-		
-		tmp=new Production();
-		tmp.left="D";
-		G.add(tmp);
-		
-		//L → int | float
-		tmp=new Production();
-		tmp.left="L";
-		tmp.add("int");
-		G.add(tmp);
-		
-		tmp=new Production();
-		tmp.left="L";
-		tmp.add("float");
-		G.add(tmp);
-		
-		//S → id = E ;
-		tmp=new Production();
-		tmp.left="S";
-		tmp.add("id");
-		tmp.add("=");
-		tmp.add("E");
-		tmp.add(";");
-		G.add(tmp);
-		
-		//S → if ( C ) S1
-		tmp=new Production();
-		tmp.left="S";
-		tmp.add("if");
-		tmp.add("(");
-		tmp.add("C");
-		tmp.add(")");
-		tmp.add("S");
-		G.add(tmp);
-		
-		//S → while ( C ) S1
-		tmp=new Production();
-		tmp.left="S";
-		tmp.add("while");
-		tmp.add("(");
-		tmp.add("C");
-		tmp.add(")");
-		tmp.add("S");
-		G.add(tmp);
-		
-		//S → S ; S
-		tmp=new Production();
-		tmp.left="S";
-		tmp.add("S");
-		tmp.add(";");
-		tmp.add("S");
-		G.add(tmp);
-		
-		//C → E1 > E2
-		tmp=new Production();
-		tmp.left="C";
-		tmp.add("E");
-		tmp.add(">");
-		tmp.add("E");
-		G.add(tmp);
-		
-		//C → E1 < E2
-		tmp=new Production();
-		tmp.left="C";
-		tmp.add("E");
-		tmp.add("<");
-		tmp.add("E");
-		G.add(tmp);
-		
-		//C → E1 == E2
-		tmp=new Production();
-		tmp.left="C";
-		tmp.add("E");
-		tmp.add("==");
-		tmp.add("E");
-		G.add(tmp);
-		
-		//E → E1 + T
-		tmp=new Production();
-		tmp.left="E";
-		tmp.add("E");
-		tmp.add("+");
-		tmp.add("T");
-		G.add(tmp);
-		
-		//E → E1 – T
-		tmp=new Production();
-		tmp.left="E";
-		tmp.add("E");
-		tmp.add("-");
-		tmp.add("T");
-		G.add(tmp);
-		
-		//E → T
-		tmp=new Production();
-		tmp.left="E";
-		tmp.add("T");
-		G.add(tmp);
-		
-		//T → F
-		tmp=new Production();
-		tmp.left="T";
-		tmp.add("F");
-		G.add(tmp);
-		
-		//T → T1 * F
-		tmp=new Production();
-		tmp.left="T";
-		tmp.add("T");
-		tmp.add("*");
-		tmp.add("F");
-		G.add(tmp);
-		
-		//T → T1 / F
-		tmp=new Production();
-		tmp.left="T";
-		tmp.add("T");
-		tmp.add("/");
-		tmp.add("F");
-		G.add(tmp);
-		
-		//F → ( E )
-		tmp=new Production();
-		tmp.left="F";
-		tmp.add("(");
-		tmp.add("E");
-		tmp.add(")");
-		G.add(tmp);
-		
-		//F → id
-		tmp=new Production();
-		tmp.left="F";
-		tmp.add("id");
-		G.add(tmp);
-		
-		//F → int10
-		tmp=new Production();
-		tmp.left="F";
-		tmp.add("int10");
-		G.add(tmp);
-		
-		return;
-	}
+	
 	
 	private static Itemset GOTO(Itemset I, String X) {
 		Itemset tmp=new Itemset();
@@ -280,6 +160,10 @@ public class Parser {
 			Status status=new Status();
 			
 			for(Item j:I) {
+				if(j.production==0&&j.point==1) {
+					status.ACTION.put("$", new OPMode(0));
+					continue;
+				}
 				String A=G.get(j.production).left;
 				String a=G.get(j.production).get(j.point);
 				if(a!=null&&isTerminal(a)) {
@@ -289,22 +173,55 @@ public class Parser {
 					}
 				}
 				else if(a==null) {
-					for(String a:FOLLOW(A)) {
-						
+					for(String t:FOLLOW.get(A)) {
+						status.ACTION.put(t, new OPMode(2,j.production));
 					}
 				}
 			}
 			
-			
-			
+			for(String T:nonterminalSet) {
+				if(GOTO(I,T)!=null) {
+					status.GOTO.put(T, C.indexOf(GOTO(I,T)));
+				}
+			}
 			analyselist.add(status);
 		}
 	}
 	
 	public static void compileLR() {
-		init();//初始化值
+		try {
+			init();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//初始化值
 		getLR0();
 		makeGOTO();
-		
+	}
+	public static void LR(String[] w) {
+		int tip=0;
+		String a=w[tip++];
+		StatuStack st=new StatuStack();
+		st.push(0);
+		while(true) {
+			int s=st.top();
+			Status status=analyselist.get(s);
+			if(status.ACTION.get(a).op==1) {
+				st.push(status.ACTION.get(a).data);
+				a=(tip!=w.length)?w[tip++]:"$";
+			}
+			else if(status.ACTION.get(a).op==2){
+				int p=status.ACTION.get(a).data;
+				int len=G.get(p).length();
+				st.pop(len);
+				int t=st.top();
+				st.push(analyselist.get(t).GOTO.get(G.get(p).left));
+				System.out.println(G.get(p).toString());
+			}
+			else if(status.ACTION.get(a).op==0){
+				System.out.println("Accept!");
+				break;
+			}
+		}
 	}
 }
