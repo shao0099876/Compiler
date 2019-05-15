@@ -13,25 +13,40 @@ public class Production {
 		right.add(s);
 	}
 	public String get(int point) {
-		// TODO Auto-generated method stub
 		if(right.size()==point) {
 			return null;
 		}
 		return right.get(point);
 	}
 	public int length() {
-		// TODO Auto-generated method stub
 		return right.size();
 	}
 	public String toString() {
 		StringBuilder sb=new StringBuilder();
 		sb.append(left);
-		sb.append(" ");
-		sb.append(right.size());
-		sb.append(" ");
+		sb.append("¡ú");
 		for(String s:right) {
 			sb.append(s+" ");
 		}
 		return sb.toString();
+	}
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Production))
+            return false;   
+        if (obj == this)
+            return true;
+        Production x=(Production)obj;
+        if(!this.left.equals(x.left)) {
+        	return false;
+        }
+        if(this.right.size()!=x.right.size()) {
+        	return false;
+        }
+        for(int i=0;i<this.right.size();i++) {
+        	if(!this.right.get(i).equals(x.right.get(i))) {
+        		return false;
+        	}
+        }
+        return true;
 	}
 }

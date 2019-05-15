@@ -1,45 +1,55 @@
 package parser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 public class Parser {
-	private static Set<Production> G;
-	private static Set<Production> G1;
-	private static String[] nonterminalList= {"P1","P","D","L","S","E","C","S1","S2","E1","E2","T","F","T1"};
-	private static String[] terminalList= {"id",";","null","int","float",
-											"=","if","(",")","else","while",">","<","==","+","-","*","/","int10"};
-	private static Set<String> nonterminalSet;
-	private static Set<String> terminalSet;
-	private static Set<String> symbolSet;
-	private static boolean isNonterminal(String s) {
+	public static ArrayList<Production> G;
+	
+	private static String[] nonterminalList= {"P1","P","D","L","S","E","C","T","F"};
+	private static String[] terminalList= {"id",";","int","float",
+											"=","if","(",")","while",">","<","==","+","-","*","/","int10"};
+	public static ArrayList<String> nonterminalSet;
+	private static ArrayList<String> terminalSet;
+	private static ArrayList<String> symbolSet;
+	
+	private static ArrayList<Itemset> C;
+	
+	private static ArrayList<Status> analyselist;
+	
+	public static boolean isNonterminal(String s) {
 		return nonterminalSet.contains(s);
 	}
 	private static boolean isTerminal(String s) {
 		return terminalSet.contains(s);
 	}
 	private static void init() {
-		G=new HashSet<Production>();
+		//初始化产生式
+		G=new ArrayList<Production>();
 		setArray();
-		
-		G1=new HashSet<Production>();
-		G1.addAll(G);
-		Production tmp=new Production();
-		tmp.left="P1";
-		tmp.add("P");
-		G1.add(tmp);
-		
-		nonterminalSet=new HashSet<String>(Arrays.asList(nonterminalList));
-		terminalSet=new HashSet<String>(Arrays.asList(terminalList));
-		
-		symbolSet=new HashSet<String>();
+		//初始化符号集
+		nonterminalSet=new ArrayList<String>(Arrays.asList(nonterminalList));
+		terminalSet=new ArrayList<String>(Arrays.asList(terminalList));
+		symbolSet=new ArrayList<String>();
 		symbolSet.addAll(nonterminalSet);
 		symbolSet.addAll(terminalSet);
+		//初始化GOTO自动机项集
+		C=new ArrayList<Itemset>();
+		analyselist=new ArrayList<Status>();
 	}
 	private static void setArray() {
 		Production tmp;
+		
+		//P1->P
+		tmp=new Production();
+		tmp.left="P1";
+		tmp.add("P");
+		G.add(tmp);
 		
 		//P → D S
 		tmp=new Production();
@@ -59,7 +69,6 @@ public class Parser {
 		
 		tmp=new Production();
 		tmp.left="D";
-		tmp.add("null");
 		G.add(tmp);
 		
 		//L → int | float
@@ -89,19 +98,7 @@ public class Parser {
 		tmp.add("(");
 		tmp.add("C");
 		tmp.add(")");
-		tmp.add("S1");
-		G.add(tmp);
-		
-		//S → if ( C ) S1 else S2
-		tmp=new Production();
-		tmp.left="S";
-		tmp.add("if");
-		tmp.add("(");
-		tmp.add("C");
-		tmp.add(")");
-		tmp.add("S1");
-		tmp.add("else");
-		tmp.add("S2");
+		tmp.add("S");
 		G.add(tmp);
 		
 		//S → while ( C ) S1
@@ -111,7 +108,7 @@ public class Parser {
 		tmp.add("(");
 		tmp.add("C");
 		tmp.add(")");
-		tmp.add("S1");
+		tmp.add("S");
 		G.add(tmp);
 		
 		//S → S ; S
@@ -125,31 +122,31 @@ public class Parser {
 		//C → E1 > E2
 		tmp=new Production();
 		tmp.left="C";
-		tmp.add("E1");
+		tmp.add("E");
 		tmp.add(">");
-		tmp.add("E2");
+		tmp.add("E");
 		G.add(tmp);
 		
 		//C → E1 < E2
 		tmp=new Production();
 		tmp.left="C";
-		tmp.add("E1");
+		tmp.add("E");
 		tmp.add("<");
-		tmp.add("E2");
+		tmp.add("E");
 		G.add(tmp);
 		
 		//C → E1 == E2
 		tmp=new Production();
 		tmp.left="C";
-		tmp.add("E1");
+		tmp.add("E");
 		tmp.add("==");
-		tmp.add("E2");
+		tmp.add("E");
 		G.add(tmp);
 		
 		//E → E1 + T
 		tmp=new Production();
 		tmp.left="E";
-		tmp.add("E1");
+		tmp.add("E");
 		tmp.add("+");
 		tmp.add("T");
 		G.add(tmp);
@@ -157,7 +154,7 @@ public class Parser {
 		//E → E1 – T
 		tmp=new Production();
 		tmp.left="E";
-		tmp.add("E1");
+		tmp.add("E");
 		tmp.add("-");
 		tmp.add("T");
 		G.add(tmp);
@@ -177,7 +174,7 @@ public class Parser {
 		//T → T1 * F
 		tmp=new Production();
 		tmp.left="T";
-		tmp.add("T1");
+		tmp.add("T");
 		tmp.add("*");
 		tmp.add("F");
 		G.add(tmp);
@@ -185,7 +182,7 @@ public class Parser {
 		//T → T1 / F
 		tmp=new Production();
 		tmp.left="T";
-		tmp.add("T1");
+		tmp.add("T");
 		tmp.add("/");
 		tmp.add("F");
 		G.add(tmp);
@@ -212,28 +209,45 @@ public class Parser {
 		
 		return;
 	}
-	private static Set<Items> CLOSURE(Set<Items> I) {
-		Set<Items> J=new HashSet<Items>();
-		Set<Items> res=new HashSet<Items>();
-		J.addAll(I);
-		boolean flag=true;
-		while(flag){
+	
+	private static Itemset GOTO(Itemset I, String X) {
+		Itemset tmp=new Itemset();
+		for(Item i:I) {
+			String next=i.getSign();
+			if(X.equals(next)) {
+				Item t=new Item();
+				t.point=i.point+1;
+				t.production=i.production;
+				tmp.add(t);
+			}
+		}
+		if(tmp.size()==0) {
+			return null;
+		}
+		return CLOSURE(tmp);
+	}
+	public static Itemset CLOSURE(Itemset Y) {
+		Itemset X=new Itemset();
+		for(Item i:Y) {
+			Item tmp=new Item();
+			tmp.point=i.point;
+			tmp.production=i.production;
+			X.add(tmp);
+		}
+		
+		boolean flag=false;
+		do {
 			flag=false;
-			for(Items item:J) {
-				J.remove(item);
-				res.add(item);
-				String s=item.getSign();
-				if (isNonterminal(s)) {
-					for(Production production:G) {
-						
-						if(!production.left.equals(s)) {
-							continue;
-						}
-						Items tmp=new Items(production);
-						if(!J.contains(tmp)) {
-							J.add(tmp);
-							flag=true;
-							break;
+			for(Item i:X) {
+				String B=i.getSign();
+				if(Parser.isNonterminal(B)) {
+					for(Production j:Parser.G) {
+						if(j.left.equals(B)) {
+							Item tmp=new Item(Parser.G.indexOf(j));
+							if(!X.contains(tmp)) {
+								X.add(tmp);
+								flag=true;
+							}
 						}
 					}
 				}
@@ -241,52 +255,56 @@ public class Parser {
 					break;
 				}
 			}
-		}
-		return res;
+		}while(flag);
+		return X;
 	}
-	private static Set<Items> GOTO(Set<Items> I,String X){
-		Set<Items> res=new HashSet<Items>();
-		for(Items item:I) {
-			String s=item.getSign();
-			if(s.equals(X)) {
-				Items new_item=new Items();
-				new_item.point=item.point+1;
-				new_item.production=item.production;
-				if(new_item.point<=item.production.length()) {
-					res.add(new_item);
+	
+	private static void getLR0() {
+		Itemset I0=new Itemset();
+		I0.add(new Item(0));
+		C.add(CLOSURE(I0));
+		for(int i=0;i<C.size();i++) {
+			Itemset I=C.get(i);
+			for(String X:symbolSet) {
+				Itemset tmp=GOTO(I,X);
+				if(tmp!=null&&!C.contains(tmp)) {
+					C.add(tmp);
 				}
 			}
 		}
-		res=CLOSURE(res);
-		return res;
 	}
-	private static void items() {
-		Production tmp=new Production();
-		tmp.left="P1";
-		tmp.add("P");
-		Set<Items> tmp_set=new HashSet<Items>();
-		tmp_set.add(new Items(tmp));
-		
-		Set<Set<Items> >C=new HashSet<Set<Items> >();
-		C.add(CLOSURE(tmp_set));
-		
-		boolean flag=true;
-		while(flag) {
-			flag=false;
-			for(Set<Items> I:C) {
-				for(String X:symbolSet) {
-					Set<Items> goto_tmp=GOTO(I,X);
-					if(!goto_tmp.isEmpty()&&!C.contains(goto_tmp)) {
-						C.add(goto_tmp);
-						flag=true;
+	
+	private static void makeGOTO() {
+		for(int i=0;i<C.size();i++) {
+			Itemset I=C.get(i);
+			Status status=new Status();
+			
+			for(Item j:I) {
+				String A=G.get(j.production).left;
+				String a=G.get(j.production).get(j.point);
+				if(a!=null&&isTerminal(a)) {
+					Itemset tmp=GOTO(I,a);
+					if(C.contains(tmp)) {
+						status.ACTION.put(a, new OPMode(1,C.indexOf(tmp)));
+					}
+				}
+				else if(a==null) {
+					for(String a:FOLLOW(A)) {
+						
 					}
 				}
 			}
+			
+			
+			
+			analyselist.add(status);
 		}
-		int a=1+1;
 	}
+	
 	public static void compileLR() {
 		init();//初始化值
-		items();//求规范LR(0)项集族
+		getLR0();
+		makeGOTO();
+		
 	}
 }

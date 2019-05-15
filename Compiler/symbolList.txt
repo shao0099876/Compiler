@@ -1,0 +1,17 @@
+1 NumToken 1 
+123 NumToken 123 
+123123 NumToken 123123 
+asdf IdToken null 
+asdfadsf IdToken null 
+asdgareb IdToken null 
+adsfadf123 IdToken null 
+adsgafsdg IdToken null 
+2 NumToken 2 
+3 NumToken 3 
+then KeywordToken null 
+do KeywordToken null 
+else KeywordToken null 
+while KeywordToken null 
+if KeywordToken null 
++ OpToken null 
+= OpToken null 
