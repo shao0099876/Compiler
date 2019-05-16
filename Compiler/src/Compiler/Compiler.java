@@ -9,16 +9,15 @@ import parser.Parser;
 import ui.UserInterface;
 
 public class Compiler {
-	private static boolean DEBUG=true;
+	private static boolean DEBUG=false;
 	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException, IOException {
+		Parser.compileLR();
 		if(!DEBUG) {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			new UserInterface();
 		}
 		else {
-			Parser.compileLR();
-			String[] tmp= {"int","a","=","1",";"};
-			Parser.LR(tmp);
+			
 		}
 	}
 }

@@ -6,6 +6,7 @@ D L id ; D
 D ¦Å
 L int
 L float
+S ¦Å
 S id = E ;
 S if ( C ) S
 S while ( C ) S
@@ -26,14 +27,14 @@ P1 int float ¦Å id if while
 P int float ¦Å id if while
 D ¦Å int float
 L int float
-S id if while
+S id if while ¦Å
 E ( id int10
 T ( id int10
 F ( id int10
 C ( id int10
 P1 $
 P $
-D id if while
+D id if while $
 L id
 S $ ;
 E ; > < == + - )

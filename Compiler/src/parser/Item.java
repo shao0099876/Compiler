@@ -30,15 +30,15 @@ public class Item {
 		StringBuilder sb=new StringBuilder();
 		Production X=Parser.getProduction(production);
 		sb.append(X.left);
-		sb.append("¡ú");
+		sb.append("->");
 		for(int i=0;i<X.length();i++) {
 			if(point==i) {
-				sb.append("¡¤");
+				sb.append(".");
 			}
 			sb.append(X.get(i));
 		}
 		if(point==X.length()) {
-			sb.append("¡¤");
+			sb.append(".");
 		}
 		sb.append("\n");
 		return sb.toString();

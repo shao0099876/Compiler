@@ -10,6 +10,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import lexer.LexicalAnalyze;
+import lexer.token.Token;
+import ui.UserInterface;
+
 public class Parser {
 	private static GrammerSet G;
 	
@@ -35,34 +39,28 @@ public class Parser {
 	}
 	private static void init() throws IOException {
 		BufferedReader reader=new BufferedReader(new FileReader("LR.txt"));
-		//初始化非终结符号集
 		String s=reader.readLine();
 		String[] tmp=s.split(" ");
 		nonterminalSet=new ArrayList<String>(Arrays.asList(tmp));
-		//初始化终结符号集
 		s=reader.readLine();
 		tmp=s.split(" ");
 		terminalSet=new ArrayList<String>(Arrays.asList(tmp));
-		//初始化文法符号集
 		symbolSet=new ArrayList<String>();
 		symbolSet.addAll(nonterminalSet);
 		symbolSet.addAll(terminalSet);
-		//初始化产生式
 		G=new GrammerSet();
-		for(int i=1;i<=22;i++) {
+		for(int i=1;i<=23;i++) {
 			s=reader.readLine();
 			tmp=s.split(" ");
 			Production p=new Production();
 			p.left=tmp[0];
 			for(int j=1;j<tmp.length;j++) {
-				if(tmp[j]=="ε") {
-					continue;
+				if(!tmp[j].equals("ε")) {
+					p.right.add(tmp[j]);
 				}
-				p.right.add(tmp[j]);
 			}
 			G.add(p);
 		}
-		//初始化FIRST集
 		FIRST=new HashMap<String,Set<String> >();
 		for(int i=1;i<=9;i++) {
 			s=reader.readLine();
@@ -74,7 +72,6 @@ public class Parser {
 			}
 			FIRST.put(left, right);
 		}
-		//初始化FOLLOW集
 		FOLLOW=new HashMap<String,Set<String> >();
 		for(int i=1;i<=9;i++) {
 			s=reader.readLine();
@@ -87,7 +84,6 @@ public class Parser {
 			FOLLOW.put(left,right);
 		}
 		reader.close();
-		//初始化GOTO自动机项集
 		C=new ArrayList<Itemset>();
 		analyselist=new ArrayList<Status>();
 	}
@@ -182,37 +178,62 @@ public class Parser {
 	}
 	
 	public static void compileLR() throws IOException {
-		//初始化值
 		init();
-		//求规范LR0集族
 		getLR0();
-		//生成SLR分析表
 		makeGOTO();
 	}
-	public static void LR(String[] w) {
+	private static String tokenToString(Token token) {
+		String a="";
+		if(token.getType()=="KeywordToken") {
+			a=token.getName();
+		}
+		if(token.getType()=="IdToken") {
+			a="id";
+		}
+		if(token.getType()=="NumToken") {
+			a="int10";
+		}
+		if(token.getType()=="OpToken") {
+			a=token.getName();
+		}
+		return a;
+	}
+	public static void LR(ArrayList<Token> w) {
 		int tip=0;
-		String a=w[tip++];
+		Token token=w.get(tip++);
+		String a=tokenToString(token);
 		StatuStack st=new StatuStack();
 		st.push(0);
 		while(true) {
 			int s=st.top();
 			Status status=analyselist.get(s);
-			if(status.ACTION.get(a).op==1) {
-				st.push(status.ACTION.get(a).data);
-				a=(tip!=w.length)?w[tip++]:"$";
+			OPMode record=status.ACTION.get(a);
+			if(record==null) {
+				System.out.println("ERROR");
 			}
-			else if(status.ACTION.get(a).op==2){
-				int p=status.ACTION.get(a).data;
+			else if(record.op==1) {
+				st.push(record.data);
+				a=(tip!=w.size())?tokenToString(w.get(tip++)):"$";
+			}
+			else if(record.op==2){
+				int p=record.data;
 				int len=G.get(p).length();
 				st.pop(len);
 				int t=st.top();
 				st.push(analyselist.get(t).GOTO.get(G.get(p).left));
 				System.out.println(G.get(p).toString());
 			}
-			else if(status.ACTION.get(a).op==0){
+			else if(record.op==0){
 				System.out.println("Accept!");
 				break;
 			}
+		}
+	}
+	public static void GrammerAnalyse() {
+		String code=UserInterface.getCode();
+		String[] codeArray=code.split("\n");
+		for(String i:codeArray) {
+			LR(LexicalAnalyze.call(i));
 		}
 	}
 }

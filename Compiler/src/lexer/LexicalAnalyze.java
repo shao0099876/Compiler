@@ -21,7 +21,7 @@ public class LexicalAnalyze {
 	private static final int ID=2;//标识符标识
 	private static final int OP=3;//符号标识
 	private static char opList[]= {'+','-','*','/','>','<','=','(',')',';','\'','!'};//符号表
-	private static String keywordList[]= {"if","then","else","while","do"};//关键字表
+	private static String keywordList[]= {"if","then","while","do","int","float"};//关键字表
 	private static SymbolList symbolList;//符号表
 	private static ArrayList<Token> tokenList;//token串表
 	private static ArrayList<LexicalError> errorList;
@@ -56,6 +56,20 @@ public class LexicalAnalyze {
 		long time2=System.currentTimeMillis();
 		long diff=time2-time1;
 		output(diff);
+	}
+	public static ArrayList<Token> call(String s) {
+		code=s;
+		symbolList=new SymbolList();//符号表初始化
+		tokenList=new ArrayList<Token>();//串表初始化
+		errorList=new ArrayList<LexicalError>();
+		for(int i=0;i<keywordList.length;i++) {//symbolList加入关键词符号
+			symbolList.add(new KeywordToken(keywordList[i]));
+		}
+		lexemeBegin=0;//初始化指针
+		forward=0;
+		match_start();
+		
+		return tokenList;
 	}
 	private static void match_start() {//分析自动机初始状态
 		while(forward<code.length()) {//防止越界

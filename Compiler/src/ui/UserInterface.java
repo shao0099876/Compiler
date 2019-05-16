@@ -79,22 +79,18 @@ public class UserInterface extends JFrame{
 		//语法分析菜单创建
 		JMenu ParserMenu=new JMenu("语法分析");
 			
-			//编译LR(0)文法
-			JMenuItem compileLR=new JMenuItem("编译LR(0)文法");
-			compileLR.addActionListener(new ActionListener() {
+			JMenuItem analyse=new JMenuItem("分析");
+			analyse.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					try {
-						Parser.compileLR();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					Parser.GrammerAnalyse();
 				}
 				
 			});
+			ParserMenu.add(analyse);
 			
+		menuBar.add(ParserMenu);
 		
 		
 		return menuBar;
@@ -103,7 +99,7 @@ public class UserInterface extends JFrame{
 		super("Compiler Powered by Balmy");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		self=this;
-		setSize(1000,1000);
+		setSize(800,800);
 		JPanel mainFrame=new JPanel(new BorderLayout());
 			mainFrame.add(BorderLayout.NORTH,setJMenuBar());
 			mainFrame.add(BorderLayout.CENTER,new JScrollPane(codeText));

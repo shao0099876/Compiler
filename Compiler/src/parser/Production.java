@@ -24,7 +24,7 @@ public class Production {
 	public String toString() {
 		StringBuilder sb=new StringBuilder();
 		sb.append(left);
-		sb.append("¡ú");
+		sb.append("->");
 		for(String s:right) {
 			sb.append(s+" ");
 		}
