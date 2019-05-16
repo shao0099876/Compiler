@@ -12,10 +12,11 @@ import java.util.Set;
 
 import lexer.LexicalAnalyze;
 import lexer.token.Token;
+import midcode.Midcode;
 import ui.UserInterface;
 
 public class Parser {
-	private static GrammerSet G;
+	public static GrammerSet G;
 	
 	private static ArrayList<String> nonterminalSet;
 	private static ArrayList<String> terminalSet;
@@ -27,6 +28,8 @@ public class Parser {
 	private static ArrayList<Itemset> C;
 	
 	private static ArrayList<Status> analyselist;
+	
+	private static int offset;
 	
 	public static boolean isNonterminal(String s) {
 		return nonterminalSet.contains(s);
@@ -203,24 +206,25 @@ public class Parser {
 		Token token=w.get(tip++);
 		String a=tokenToString(token);
 		StatuStack st=new StatuStack();
-		st.push(0);
+		st.push(0,null);
 		while(true) {
-			int s=st.top();
+			int s=st.top().getStatus();
 			Status status=analyselist.get(s);
 			OPMode record=status.ACTION.get(a);
 			if(record==null) {
 				System.out.println("ERROR");
 			}
 			else if(record.op==1) {
-				st.push(record.data);
+				st.push(record.data,w.get(tip-1));
 				a=(tip!=w.size())?tokenToString(w.get(tip++)):"$";
 			}
 			else if(record.op==2){
 				int p=record.data;
 				int len=G.get(p).length();
+				Midcode.action(p,st);
 				st.pop(len);
-				int t=st.top();
-				st.push(analyselist.get(t).GOTO.get(G.get(p).left));
+				int t=st.top().getStatus();
+				st.push(analyselist.get(t).GOTO.get(G.get(p).left),w.get(tip-1));
 				System.out.println(G.get(p).toString());
 			}
 			else if(record.op==0){
@@ -235,5 +239,9 @@ public class Parser {
 		for(String i:codeArray) {
 			LR(LexicalAnalyze.call(i));
 		}
+	}
+	public static void setOffset(int i) {
+		// TODO Auto-generated method stub
+		offset=i;
 	}
 }

@@ -1,0 +1,5 @@
+0:  P1 P
+1:  P M1 D S
+2:  M1 ε {offset=0;}
+3:  D L id ; M2 D
+4:  M2 ε {top.put(id.lexeme,T.type,offset);offset=offset+T.width}

@@ -1,8 +1,10 @@
-P1 P D L S E C T F
+P1 P D L S E C T F M1
 id ; int float = if ( ) while > < == + - * / int10
 P1 P
-P D S
-D L id ; D
+P M1 D S
+M1 ¦Å
+D L id ; M2 D
+M2 ¦Å
 D ¦Å
 L int
 L float
@@ -10,7 +12,7 @@ S ¦Å
 S id = E ;
 S if ( C ) S
 S while ( C ) S
-S S ; S
+S S S
 C E > E
 C E < E
 C E == E

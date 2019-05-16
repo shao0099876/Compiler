@@ -2,22 +2,25 @@ package parser;
 
 import java.util.ArrayList;
 
+import lexer.token.Token;
+import midcode.StatuStackRecord;
+
 public class StatuStack {
-	private ArrayList<Integer> list;
+	private ArrayList<StatuStackRecord> list;
 	private int tip;
 	public StatuStack() {
-		list=new ArrayList<Integer>();
+		list=new ArrayList<StatuStackRecord>();
 		tip=0;
 	}
-	public int top() {
-		return (tip==0)?-1:list.get(tip-1);
+	public StatuStackRecord top() {
+		return (tip==0)?null:list.get(tip-1);
 	}
-	public void push(int x) {
+	public void push(int x,Token token) {
 		if(tip==list.size()) {
-			list.add(x);
+			list.add(new StatuStackRecord(x,token));
 		}
 		else {
-			list.set(tip,x);
+			list.set(tip,new StatuStackRecord(x,token));
 		}
 		tip+=1;
 	}

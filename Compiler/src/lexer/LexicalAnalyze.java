@@ -22,7 +22,7 @@ public class LexicalAnalyze {
 	private static final int OP=3;//符号标识
 	private static char opList[]= {'+','-','*','/','>','<','=','(',')',';','\'','!'};//符号表
 	private static String keywordList[]= {"if","then","while","do","int","float"};//关键字表
-	private static SymbolList symbolList;//符号表
+	public static SymbolList symbolList;//符号表
 	private static ArrayList<Token> tokenList;//token串表
 	private static ArrayList<LexicalError> errorList;
 	private static void initance() {
