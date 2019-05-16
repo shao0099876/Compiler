@@ -1,7 +1,6 @@
 package lexer.token;
 
 public abstract class Token {
-	
 	protected String name;
 	public Token(String p_name) {
 		name=p_name;

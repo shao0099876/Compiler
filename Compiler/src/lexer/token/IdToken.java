@@ -1,8 +1,8 @@
 package lexer.token;
 
 public class IdToken extends Token{
-	private int type;
-	private int 
+	public String type;
+	public int offset;
 	public IdToken(String name) {
 		super(name);
 	}

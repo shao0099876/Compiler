@@ -7,7 +7,7 @@ import midcode.StatuStackRecord;
 
 public class StatuStack {
 	private ArrayList<StatuStackRecord> list;
-	private int tip;
+	public int tip;
 	public StatuStack() {
 		list=new ArrayList<StatuStackRecord>();
 		tip=0;
@@ -26,5 +26,9 @@ public class StatuStack {
 	}
 	public void pop(int len) {
 		tip-=len;
+	}
+	public StatuStackRecord get(int i) {
+		// TODO Auto-generated method stub
+		return list.get(i);
 	}
 }

@@ -29,7 +29,7 @@ public class Parser {
 	
 	private static ArrayList<Status> analyselist;
 	
-	private static int offset;
+	public static int offset;
 	
 	public static boolean isNonterminal(String s) {
 		return nonterminalSet.contains(s);
@@ -52,7 +52,7 @@ public class Parser {
 		symbolSet.addAll(nonterminalSet);
 		symbolSet.addAll(terminalSet);
 		G=new GrammerSet();
-		for(int i=1;i<=23;i++) {
+		for(int i=0;i<26;i++) {
 			s=reader.readLine();
 			tmp=s.split(" ");
 			Production p=new Production();
@@ -65,7 +65,7 @@ public class Parser {
 			G.add(p);
 		}
 		FIRST=new HashMap<String,Set<String> >();
-		for(int i=1;i<=9;i++) {
+		for(int i=1;i<=12;i++) {
 			s=reader.readLine();
 			tmp=s.split(" ");
 			String left=tmp[0];
@@ -76,7 +76,7 @@ public class Parser {
 			FIRST.put(left, right);
 		}
 		FOLLOW=new HashMap<String,Set<String> >();
-		for(int i=1;i<=9;i++) {
+		for(int i=1;i<=12;i++) {
 			s=reader.readLine();
 			tmp=s.split(" ");
 			String left=tmp[0];
@@ -208,7 +208,7 @@ public class Parser {
 		StatuStack st=new StatuStack();
 		st.push(0,null);
 		while(true) {
-			int s=st.top().getStatus();
+			int s=st.top().statusNumber;
 			Status status=analyselist.get(s);
 			OPMode record=status.ACTION.get(a);
 			if(record==null) {
@@ -223,7 +223,7 @@ public class Parser {
 				int len=G.get(p).length();
 				Midcode.action(p,st);
 				st.pop(len);
-				int t=st.top().getStatus();
+				int t=st.top().statusNumber;
 				st.push(analyselist.get(t).GOTO.get(G.get(p).left),w.get(tip-1));
 				System.out.println(G.get(p).toString());
 			}
@@ -239,9 +239,5 @@ public class Parser {
 		for(String i:codeArray) {
 			LR(LexicalAnalyze.call(i));
 		}
-	}
-	public static void setOffset(int i) {
-		// TODO Auto-generated method stub
-		offset=i;
 	}
 }

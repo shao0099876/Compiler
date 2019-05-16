@@ -1,4 +1,4 @@
-P1 P D L S E C T F M1
+P1 P D L S E C T F M1 M2 MM 
 id ; int float = if ( ) while > < == + - * / int10
 P1 P
 P M1 D S
@@ -10,8 +10,9 @@ L int
 L float
 S ¦Å
 S id = E ;
-S if ( C ) S
-S while ( C ) S
+S if ( C ) MM S
+MM ¦Å
+S while MM ( C ) MM S
 S S S
 C E > E
 C E < E
@@ -34,6 +35,9 @@ E ( id int10
 T ( id int10
 F ( id int10
 C ( id int10
+M1 ¦Å
+M2 ¦Å
+MM ¦Å
 P1 $
 P $
 D id if while $
@@ -43,3 +47,6 @@ E ; > < == + - )
 C )
 T * / ; < > == + - )
 F * / ; < > == + - )
+M1 int float id if while $
+M2 int float id if while $
+MM id if while $ ; (
