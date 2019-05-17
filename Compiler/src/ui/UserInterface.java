@@ -90,6 +90,29 @@ public class UserInterface extends JFrame{
 			});
 			ParserMenu.add(analyse);
 			
+			//显示符号表菜单项创建
+			JMenuItem parserMenuShowSymbolListItem=new JMenuItem("显示符号表");
+			parserMenuShowSymbolListItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					new SymbolListDialog(self);
+				}
+				
+			});
+			ParserMenu.add(parserMenuShowSymbolListItem);
+			
+			//显示三地址码表菜单项创建
+			JMenuItem parserMenuShowMidcodeListItem=new JMenuItem("显示三地址码表");
+			parserMenuShowMidcodeListItem.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					new MidcodeDialog(self);
+				}
+				
+			});
+			ParserMenu.add(parserMenuShowMidcodeListItem);
+			
 		menuBar.add(ParserMenu);
 		
 		

@@ -237,13 +237,15 @@ public class Parser {
 		}
 	}
 	public static void GrammerAnalyse() {
+		long time1=System.currentTimeMillis();
 		String code=UserInterface.getCode();
 		String[] codeArray=code.split("\n");
 		for(String i:codeArray) {
 			LR(LexicalAnalyze.call(i));
 		}
-		for(String i:Midcode.code) {
-			System.out.println(i);
-		}
+		long time2=System.currentTimeMillis();
+		System.out.print("语法分析完成！所用时间:");
+		System.out.print(time2-time1);
+		System.out.print("ms");
 	}
 }

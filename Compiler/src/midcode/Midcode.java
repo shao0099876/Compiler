@@ -290,4 +290,12 @@ public class Midcode {
 			code.set(i, sb.toString());
 		}
 	}
+	public static String[][] codeListToTable() {
+		// TODO Auto-generated method stub
+		String[][] result=new String[code.size()][1];
+		for(int i=0;i<code.size();i++) {
+			result[i][0]=code.get(i);
+		}
+		return result;
+	}
 }
