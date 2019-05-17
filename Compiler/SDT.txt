@@ -1,23 +1,23 @@
-P M1 D S
-M1 ¦Å {offset=0;}
+P M1 D
+P S
+M1 null {offset=0;}
 D L id ; M2 D
-M2 ¦Å {top.put(id.lexeme,L.type,offset);offset=offset+L.width}
-D ¦Å
+M2 null {top.put(id.lexeme,L.type,offset);offset=offset+L.width}
+D null
 L int {L.type="integer",L.width=4}
 L float {L.type="float",L.width=8}
-S ¦Å
-S id = E ; {gen(top.get(id.lexeme)'='E.addr)}
-S if ( C ) MM S {backpatch(C.truelist,MM.instr);S.nextlist=merge(C.falselist,S(1).nextlist)}
-MM ¦Å {MM.instr=nextinstr}
+S null
+S id = E ; {gen(top.get(id.lexeme)'='E.addr);S.nextlist=null}
+S if ( C ) MM S {backpatch(C.truelist,MM.instr);S.nextlist=merge(C.falselist,S(1).nextlist);backpatch(S.nextlist,nextinstr)}
+MM null {MM.instr=nextinstr}
 S while MM ( C ) MM S {backpatch(S(1).nextlist,MM(1).instr);backpatch(C.truelist,MM(2).instr);S.nextlist=C.falselist;gen("goto " MM(1).instr)}
-S S S
 C E > E {C.truelist=makelist(nextinstr);C.falselist=makelist(nextinstr+1);gen("if" E(1).addr ">" E2.addr "goto");gen("goto")}
 C E < E {C.truelist=makelist(nextinstr);C.falselist=makelist(nextinstr+1);gen("if" E(1).addr "<" E2.addr "goto");gen("goto")}
 C E == E {C.truelist=makelist(nextinstr);C.falselist=makelist(nextinstr+1);gen("if" E(1).addr "==" E2.addr "goto");gen("goto")}
 E E + T {E.addr=new Temp();gen(E.addr = E(1).addr + T.addr);}
 E E ¨C T {E.addr=new Temp();gen(E.addr = E(1).addr - T.addr);}
-E T
-T F
+E T {E.addr=T.addr}
+T F {T.addr=F.addr}
 T T * F {T.addr=new Temp();gen(T.addr = T(1).addr * F.addr);}
 T T / F {T.addr=new Temp();gen(T.addr = T(1).addr / F.addr);}
 F ( E ) {F.addr=E.addr}

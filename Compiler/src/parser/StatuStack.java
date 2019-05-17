@@ -28,7 +28,23 @@ public class StatuStack {
 		tip-=len;
 	}
 	public StatuStackRecord get(int i) {
-		// TODO Auto-generated method stub
 		return list.get(i);
+	}
+	public void push(StatuStackRecord record_tmp) {
+		if(tip==list.size()) {
+			list.add(record_tmp);
+		}
+		else {
+			list.set(tip,record_tmp);
+		}
+		tip+=1;
+	}
+	public String toString() {
+		StringBuilder sb=new StringBuilder();
+		for(int i=tip-1;i>=0;i--) {
+			sb.append(list.get(i).toString());
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 }

@@ -13,6 +13,7 @@ import java.util.Set;
 import lexer.LexicalAnalyze;
 import lexer.token.Token;
 import midcode.Midcode;
+import midcode.StatuStackRecord;
 import ui.UserInterface;
 
 public class Parser {
@@ -52,13 +53,13 @@ public class Parser {
 		symbolSet.addAll(nonterminalSet);
 		symbolSet.addAll(terminalSet);
 		G=new GrammerSet();
-		for(int i=0;i<26;i++) {
+		for(int i=0;i<=25;i++) {
 			s=reader.readLine();
 			tmp=s.split(" ");
 			Production p=new Production();
 			p.left=tmp[0];
 			for(int j=1;j<tmp.length;j++) {
-				if(!tmp[j].equals("¦Å")) {
+				if(!tmp[j].equals("null")) {
 					p.right.add(tmp[j]);
 				}
 			}
@@ -221,14 +222,16 @@ public class Parser {
 			else if(record.op==2){
 				int p=record.data;
 				int len=G.get(p).length();
-				Midcode.action(p,st);
+				StatuStackRecord record_tmp=Midcode.action(p,st);
 				st.pop(len);
 				int t=st.top().statusNumber;
-				st.push(analyselist.get(t).GOTO.get(G.get(p).left),w.get(tip-1));
-				System.out.println(G.get(p).toString());
+				record_tmp.token=w.get(tip-1);
+				record_tmp.statusNumber=analyselist.get(t).GOTO.get(G.get(p).left);
+				st.push(record_tmp);
+				//System.out.println(G.get(p).toString());
 			}
 			else if(record.op==0){
-				System.out.println("Accept!");
+				//System.out.println("Accept!");
 				break;
 			}
 		}
@@ -238,6 +241,9 @@ public class Parser {
 		String[] codeArray=code.split("\n");
 		for(String i:codeArray) {
 			LR(LexicalAnalyze.call(i));
+		}
+		for(String i:Midcode.code) {
+			System.out.println(i);
 		}
 	}
 }

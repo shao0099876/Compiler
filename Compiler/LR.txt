@@ -1,24 +1,24 @@
 P1 P D L S E C T F M1 M2 MM 
 id ; int float = if ( ) while > < == + - * / int10
 P1 P
-P M1 D S
-M1 ¦Å
+P M1 D
+P S
+M1 null
 D L id ; M2 D
-M2 ¦Å
-D ¦Å
+M2 null
+D null
 L int
 L float
-S ¦Å
+S null
 S id = E ;
 S if ( C ) MM S
-MM ¦Å
+MM null
 S while MM ( C ) MM S
-S S S
 C E > E
 C E < E
 C E == E
 E E + T
-E E ¨C T
+E E - T
 E T
 T F
 T T * F
@@ -26,27 +26,27 @@ T T / F
 F ( E )
 F id
 F int10
-P1 int float ¦Å id if while
-P int float ¦Å id if while
-D ¦Å int float
+P1 int float null id if while
+P int float null id if while
+D null int float
 L int float
-S id if while ¦Å
+S id if while null
 E ( id int10
 T ( id int10
 F ( id int10
 C ( id int10
-M1 ¦Å
-M2 ¦Å
-MM ¦Å
+M1 null
+M2 null
+MM null
 P1 $
 P $
-D id if while $
+D $
 L id
-S $ ;
+S $
 E ; > < == + - )
 C )
 T * / ; < > == + - )
 F * / ; < > == + - )
-M1 int float id if while $
-M2 int float id if while $
-MM id if while $ ; (
+M1 int float $
+M2 int float $
+MM id if while $ (
